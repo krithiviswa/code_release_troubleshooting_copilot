@@ -1,0 +1,403 @@
+[
+  {
+    "test_id": "GT-01",
+    "current_problem": "A Payment release completed and the health check is green, but the new validation rule is not visible to business testers.",
+    "environment": "SIT",
+    "application": "Payment",
+    "actions_already_attempted": [
+      "Deployment completed",
+      "Health check passed"
+    ],
+    "current_triage_conversation": "The deployment job reported success. The release ticket does not mention a JVM restart step for this application.",
+    "expected_research_mode": "internal_only",
+    "expected_issue_category": "changes_not_reflecting",
+    "expected_next_actions": [
+      "Check whether a JVM restart step was required and completed",
+      "Update the release ticket to include the restart step if missing",
+      "Perform the restart and re-validate"
+    ],
+    "actions_that_should_NOT_be_repeated": [
+      "Repeat the deployment before checking the restart step"
+    ],
+    "expected_supporting_evidence": [
+      "runbook::jvm-restart-requirements::"
+    ],
+    "acceptable_alternative_actions": [
+      "Verify the served version directly against the approved artifact"
+    ],
+    "clarification_required": false
+  },
+  {
+    "test_id": "GT-02",
+    "current_problem": "Deployment to what we assumed was the standard environment succeeded, but the requester says the change is in the wrong place.",
+    "environment": "UAT",
+    "application": "Billing",
+    "actions_already_attempted": [
+      "Deployment completed against the assumed default environment"
+    ],
+    "current_triage_conversation": "The release ticket's environment field was left generic rather than naming a specific environment.",
+    "expected_research_mode": "internal_only",
+    "expected_issue_category": "changes_not_reflecting",
+    "expected_next_actions": [
+      "Confirm the exact environment required with the requester",
+      "Update the release ticket with the specific environment",
+      "Re-deploy to the correct environment"
+    ],
+    "actions_that_should_NOT_be_repeated": [
+      "Assume the usual/default environment again without confirming"
+    ],
+    "expected_supporting_evidence": [
+      "triage::record-0000::"
+    ],
+    "acceptable_alternative_actions": [],
+    "clarification_required": false
+  },
+  {
+    "test_id": "GT-03",
+    "current_problem": "XLR shows the Billing \u2192 PT deployment job stuck for over an hour with no error, while other environments deployed fine today.",
+    "environment": "PT",
+    "application": "Billing",
+    "actions_already_attempted": [],
+    "current_triage_conversation": "No release train currently exists in XLR for this application in PT.",
+    "expected_research_mode": "internal_only",
+    "expected_issue_category": "deployment_halted",
+    "expected_next_actions": [
+      "Check whether a release train exists in XLR for this application/environment",
+      "If missing, use Ansible as a PT-specific alternative to proceed",
+      "Escalate the missing release train for permanent setup"
+    ],
+    "actions_that_should_NOT_be_repeated": [
+      "Keep re-triggering the same XLR job without checking the release train"
+    ],
+    "expected_supporting_evidence": [
+      "triage::record-0000::"
+    ],
+    "acceptable_alternative_actions": [
+      "Wait for the release train to be configured if PT is not time-sensitive"
+    ],
+    "clarification_required": false
+  },
+  {
+    "test_id": "GT-04",
+    "current_problem": "A deployment job to SIT has not progressed in 40 minutes and the CD tool's dashboard is showing errors for every job, not just ours.",
+    "environment": "SIT",
+    "application": "CustomerService",
+    "actions_already_attempted": [
+      "Checked our own job log - no errors shown"
+    ],
+    "current_triage_conversation": "Multiple unrelated teams are reporting the same dashboard issue at the same time.",
+    "expected_research_mode": "internal_only",
+    "expected_issue_category": "deployment_halted",
+    "expected_next_actions": [
+      "Check the CI/CD platform's own status/outage page",
+      "Resume the deployment once the platform outage window ends"
+    ],
+    "actions_that_should_NOT_be_repeated": [
+      "Debug this as an application-specific deployment failure"
+    ],
+    "expected_supporting_evidence": [
+      "triage::record-0000::"
+    ],
+    "acceptable_alternative_actions": [],
+    "clarification_required": false
+  },
+  {
+    "test_id": "GT-05",
+    "current_problem": "CustomerService deployed successfully to Prod, but the health check is now failing with repeated connection timeouts to the database layer.",
+    "environment": "Prod",
+    "application": "CustomerService",
+    "actions_already_attempted": [
+      "Deployment completed",
+      "Confirmed no other release changes in this window"
+    ],
+    "current_triage_conversation": "Logs show the app is trying and failing to reach Cassandra.",
+    "expected_research_mode": "both",
+    "expected_issue_category": "health_check_failed",
+    "expected_next_actions": [
+      "Confirm the exact Cassandra connectivity failure from logs",
+      "Engage the NoSQL team to restore connectivity",
+      "Re-validate health once connectivity is restored"
+    ],
+    "actions_that_should_NOT_be_repeated": [
+      "Redeploy the application before confirming the database layer is reachable"
+    ],
+    "expected_supporting_evidence": [
+      "runbook::cassandra-and-database-connectivity::"
+    ],
+    "acceptable_alternative_actions": [
+      "If TLS/certificate errors are present, check truststore/driver version compatibility"
+    ],
+    "clarification_required": false
+  },
+  {
+    "test_id": "GT-06",
+    "current_problem": "A deployment's health check failed right after a scheduled patching window on the host.",
+    "environment": "Prod",
+    "application": "OrderService",
+    "actions_already_attempted": [
+      "Deployment completed",
+      "Patch activity confirmed to have run on the host just before"
+    ],
+    "current_triage_conversation": "No code changes were part of this release, only routine patching coincided with it.",
+    "expected_research_mode": "internal_only",
+    "expected_issue_category": "health_check_failed",
+    "expected_next_actions": [
+      "Perform a start-stop cluster task on the affected server",
+      "Re-check health after the restart"
+    ],
+    "actions_that_should_NOT_be_repeated": [
+      "Investigate the code as the cause before ruling out the patch-restart requirement"
+    ],
+    "expected_supporting_evidence": [
+      "triage::record-0000::"
+    ],
+    "acceptable_alternative_actions": [],
+    "clarification_required": false
+  },
+  {
+    "test_id": "GT-07",
+    "current_problem": "Deployment jobs to a specific target group keep failing after multiple retries, with no clear application-level error.",
+    "environment": "Prod",
+    "application": "Offers",
+    "actions_already_attempted": [
+      "Retried the deployment three times"
+    ],
+    "current_triage_conversation": "The failures are all against the same target group, regardless of which artifact is deployed.",
+    "expected_research_mode": "internal_only",
+    "expected_issue_category": "invalid_configuration",
+    "expected_next_actions": [
+      "Check the CD tool's inventory for stale or decommissioned servers in this target group",
+      "Update the inventory and retry"
+    ],
+    "actions_that_should_NOT_be_repeated": [
+      "Keep retrying the same deployment without checking the inventory"
+    ],
+    "expected_supporting_evidence": [
+      "triage::record-0000::"
+    ],
+    "acceptable_alternative_actions": [],
+    "clarification_required": false
+  },
+  {
+    "test_id": "GT-08",
+    "current_problem": "After the latest release, some requests to an API are behaving as if they're hitting an old version, even though every JVM reports the new build deployed.",
+    "environment": "Prod",
+    "application": "PaymentAPI",
+    "actions_already_attempted": [
+      "Confirmed all JVMs report the new version deployed"
+    ],
+    "current_triage_conversation": "The inconsistency is intermittent - some requests are fine, others are not.",
+    "expected_research_mode": "internal_only",
+    "expected_issue_category": "invalid_configuration",
+    "expected_next_actions": [
+      "Check traffic routing configuration for misrouted requests",
+      "Correct routing so all traffic reaches the intended JVMs"
+    ],
+    "actions_that_should_NOT_be_repeated": [
+      "Redeploy the application again since all JVMs already report the correct version"
+    ],
+    "expected_supporting_evidence": [
+      "triage::record-0000::"
+    ],
+    "acceptable_alternative_actions": [],
+    "clarification_required": false
+  },
+  {
+    "test_id": "GT-09",
+    "current_problem": "Final release sign-off is delayed - the person responsible for validation and sign-off has not responded in over an hour.",
+    "environment": "Prod",
+    "application": "Billing",
+    "actions_already_attempted": [
+      "Sent a message in the release channel",
+      "Waited 60 minutes"
+    ],
+    "current_triage_conversation": "No technical blocker has been found; this is purely a people-availability issue.",
+    "expected_research_mode": "internal_only",
+    "expected_issue_category": "release_delay",
+    "expected_next_actions": [
+      "Page the point of contact directly to reduce delay",
+      "Continue to wait for sign-off rather than proceeding without it"
+    ],
+    "actions_that_should_NOT_be_repeated": [
+      "Proceed with the release without the required sign-off"
+    ],
+    "expected_supporting_evidence": [
+      "triage::record-0000::"
+    ],
+    "acceptable_alternative_actions": [],
+    "clarification_required": false
+  },
+  {
+    "test_id": "GT-10",
+    "current_problem": "Validation is taking much longer than planned and the release window is at risk.",
+    "environment": "UAT",
+    "application": "Offers",
+    "actions_already_attempted": [
+      "Started functional validation on schedule"
+    ],
+    "current_triage_conversation": "The team has discovered that some test data needed to validate every scenario is not available.",
+    "expected_research_mode": "internal_only",
+    "expected_issue_category": "release_delay",
+    "expected_next_actions": [
+      "Document which scenarios cannot be validated due to missing test data",
+      "Proceed with minimal validation covering only what can actually be tested",
+      "Explicitly flag uncovered scenarios rather than reporting full coverage"
+    ],
+    "actions_that_should_NOT_be_repeated": [
+      "Report full validation as passed when some scenarios could not be tested"
+    ],
+    "expected_supporting_evidence": [
+      "triage::record-0000::"
+    ],
+    "acceptable_alternative_actions": [],
+    "clarification_required": false
+  },
+  {
+    "test_id": "GT-11",
+    "current_problem": "Our deployment went out on schedule, but is producing unexpected results tied to another service.",
+    "environment": "Prod",
+    "application": "OrderService",
+    "actions_already_attempted": [
+      "Deployed on schedule per our own release plan"
+    ],
+    "current_triage_conversation": "The application we depend on has not finished its own deployment for this release cycle yet.",
+    "expected_research_mode": "internal_only",
+    "expected_issue_category": "coordination_communication",
+    "expected_next_actions": [
+      "Pause current deployment steps until the dependent application's deployment is confirmed complete",
+      "Redo affected steps once the dependency is ready"
+    ],
+    "actions_that_should_NOT_be_repeated": [
+      "Continue deploying further steps while the dependency is still incomplete"
+    ],
+    "expected_supporting_evidence": [
+      "triage::record-0000::"
+    ],
+    "acceptable_alternative_actions": [],
+    "clarification_required": false
+  },
+  {
+    "test_id": "GT-12",
+    "current_problem": "Team members have conflicting understanding of where this release currently stands.",
+    "environment": "Prod",
+    "application": "Payment",
+    "actions_already_attempted": [],
+    "current_triage_conversation": "Status updates have been sent through the release channel, email, and direct messages, with different details in each.",
+    "expected_research_mode": "internal_only",
+    "expected_issue_category": "coordination_communication",
+    "expected_next_actions": [
+      "Stop offline (email/DM) status updates for the rest of this release",
+      "Direct all updates to the designated release channel only",
+      "Have the release lead repost a single current-status summary"
+    ],
+    "actions_that_should_NOT_be_repeated": [
+      "Continue sending status through multiple uncoordinated channels"
+    ],
+    "expected_supporting_evidence": [
+      "triage::record-0000::"
+    ],
+    "acceptable_alternative_actions": [],
+    "clarification_required": false
+  },
+  {
+    "test_id": "GT-13",
+    "current_problem": "The deployment log shows zero net new changes for this release, but we know a real code change was included.",
+    "environment": "Prod",
+    "application": "Billing",
+    "actions_already_attempted": [
+      "Confirmed the change is genuinely present in the source branch"
+    ],
+    "current_triage_conversation": "Standard deployment tooling's change-detection step reports no differences from the currently deployed version.",
+    "expected_research_mode": "internal_only",
+    "expected_issue_category": "deployment_challenges_failure",
+    "expected_next_actions": [
+      "Deploy manually using Ansible instead of the standard tooling for this release",
+      "Report the change-detection defect for follow-up"
+    ],
+    "actions_that_should_NOT_be_repeated": [
+      "Re-run the same deployment tooling expecting a different change-detection result"
+    ],
+    "expected_supporting_evidence": [
+      "triage::record-0000::"
+    ],
+    "acceptable_alternative_actions": [],
+    "clarification_required": false
+  },
+  {
+    "test_id": "GT-14",
+    "current_problem": "A deployment step keeps retrying multiple times without completing and without a clear error message.",
+    "environment": "SIT",
+    "application": "CustomerService",
+    "actions_already_attempted": [
+      "Let the step retry automatically several times"
+    ],
+    "current_triage_conversation": "An earlier temp-file cleanup step in this same job may not have completed successfully.",
+    "expected_research_mode": "internal_only",
+    "expected_issue_category": "deployment_challenges_failure",
+    "expected_next_actions": [
+      "Check whether the earlier temp-file cleanup step completed successfully",
+      "Engage the team responsible for that step to resolve the underlying failure"
+    ],
+    "actions_that_should_NOT_be_repeated": [
+      "Keep letting the step retry without investigating the earlier cleanup step"
+    ],
+    "expected_supporting_evidence": [
+      "triage::record-0000::"
+    ],
+    "acceptable_alternative_actions": [],
+    "clarification_required": false
+  },
+  {
+    "test_id": "GT-15",
+    "current_problem": "A Prod deployment for CustomerService reported success, but the served version's checksum doesn't match the approved artifact on the ticket.",
+    "environment": "Prod",
+    "application": "CustomerService",
+    "actions_already_attempted": [
+      "Deployment completed",
+      "Health check passed"
+    ],
+    "current_triage_conversation": "Two similarly-named artifacts, one SIT-suffixed and one Prod-suffixed, were both present in the artifact repository at deployment time.",
+    "expected_research_mode": "internal_only",
+    "expected_issue_category": "invalid_configuration",
+    "expected_next_actions": [
+      "Compare the deployed artifact's checksum against the approved Prod-suffixed artifact",
+      "Redeploy using the correctly-suffixed Prod artifact",
+      "Re-validate served version and checksum"
+    ],
+    "actions_that_should_NOT_be_repeated": [
+      "Assume the deployment is correct because the job reported success"
+    ],
+    "expected_supporting_evidence": [
+      "jira::rel-12020-customerservice-environment-progression-artifact-swap-incident::",
+      "jira::artifact-naming-convention-reference::"
+    ],
+    "acceptable_alternative_actions": [],
+    "clarification_required": false
+  },
+  {
+    "test_id": "GT-16",
+    "current_problem": "QA is seeing functionality in SIT for OrderService that isn't supposed to be available until a later Prod release.",
+    "environment": "SIT",
+    "application": "OrderService",
+    "actions_already_attempted": [
+      "Deployment to SIT completed"
+    ],
+    "current_triage_conversation": "The artifact deployed to SIT may not match the SIT-suffixed artifact named on the ticket.",
+    "expected_research_mode": "internal_only",
+    "expected_issue_category": "invalid_configuration",
+    "expected_next_actions": [
+      "Verify which artifact was actually deployed against the ticket's approved SIT artifact name",
+      "Redeploy the correct SIT-suffixed artifact",
+      "Confirm the Prod-suffixed artifact's separate approval is unaffected"
+    ],
+    "actions_that_should_NOT_be_repeated": [
+      "Treat this as a code defect before checking which artifact was actually deployed"
+    ],
+    "expected_supporting_evidence": [
+      "jira::rel-12030-orderservice-environment-progression-premature-prod-artifact-in-sit::",
+      "jira::artifact-naming-convention-reference::"
+    ],
+    "acceptable_alternative_actions": [],
+    "clarification_required": false
+  }
+]

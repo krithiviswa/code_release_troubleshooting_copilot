@@ -1,0 +1,47 @@
+[
+  {
+    "url": "https://example.org/kafka/client-migration-4",
+    "title": "Kafka Client 4.0 Migration Guide (synthetic public example)",
+    "content": "Synthetic public documentation: Kafka client 4.0 migration notes describe authentication configuration changes and recommend reviewing client and broker compatibility settings before rollout.",
+    "query_tags": [
+      "kafka",
+      "4.0",
+      "authentication",
+      "migration"
+    ]
+  },
+  {
+    "url": "https://example.org/kafka/authentication",
+    "title": "Kafka Authentication Configuration Reference (synthetic public example)",
+    "content": "Synthetic public documentation: authentication failures after a client upgrade should be checked against supported security protocols, credential configuration and client-server compatibility guidance.",
+    "query_tags": [
+      "kafka",
+      "authentication",
+      "security",
+      "compatibility"
+    ]
+  },
+  {
+    "url": "https://example.org/cassandra/driver-compatibility",
+    "title": "Cassandra Driver Compatibility Notes (synthetic public example)",
+    "content": "Synthetic public documentation: driver upgrades should be checked against supported database versions, TLS settings and authentication options in the version-specific migration notes.",
+    "query_tags": [
+      "cassandra",
+      "driver",
+      "compatibility",
+      "tls"
+    ]
+  },
+  {
+    "url": "https://example.org/solr/client-compatibility",
+    "title": "Solr Client Compatibility Notes (synthetic public example)",
+    "content": "Synthetic public documentation: when a Solr client or dependency version changes, review version compatibility, authentication configuration and migration notes before changing the deployment path.",
+    "query_tags": [
+      "solr",
+      "search",
+      "client",
+      "compatibility",
+      "migration"
+    ]
+  }
+]
